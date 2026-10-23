@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Board } from "../../components/Board";
 import { BackLink, ProgressBar, RichText } from "../../components/ui";
+import { useImmersive } from "../../components/useImmersive";
 import { getLesson, notationLessons, type NotationLesson } from "../../content/notation";
 import { positionFrom } from "../../content/notation/validate";
 import { useApp } from "../../store";
@@ -25,13 +26,16 @@ export function NotationLessonPage() {
 type Phase = { kind: "learn"; screen: number } | { kind: "practice"; run: number } | { kind: "result"; score: number } | { kind: "timed" };
 
 function LessonView({ lesson }: { lesson: NotationLesson }) {
+  useImmersive();
   const [phase, setPhase] = useState<Phase>({ kind: "learn", screen: 0 });
   const progress = useApp((s) => s.notation[lesson.id]);
   const recordNotation = useApp((s) => s.recordNotation);
   const setLastVisited = useApp((s) => s.setLastVisited);
   const next = notationLessons.find((l) => l.number === lesson.number + 1);
 
-  useEffect(() => setLastVisited(`/notation/${lesson.id}`, `Notation ${lesson.number}: ${lesson.title}`), [lesson, setLastVisited]);
+  useEffect(() => {
+    setLastVisited(`/notation/${lesson.id}`, `Notation ${lesson.number}: ${lesson.title}`);
+  }, [lesson, setLastVisited]);
 
   return (
     <div className="stack">

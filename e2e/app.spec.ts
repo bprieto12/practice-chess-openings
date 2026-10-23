@@ -58,7 +58,7 @@ test("practice a full line, then review", async ({ page }) => {
 
   // New cards are due in a day. Jump ahead, then review one.
   await page.clock.fastForward("25:00:00");
-  await page.getByRole("link", { name: /Review/ }).first().click();
+  await page.getByRole("link", { name: "Review queue" }).click();
   await expect(page.locator(".stat").first()).toHaveText("11");
   await page.getByRole("button", { name: /Start review/ }).click();
   await expect(page.getByText("What does Black play here?")).toBeVisible();
@@ -85,4 +85,36 @@ test("settings: theme switch applies", async ({ page }) => {
   await page.goto("/settings");
   await page.getByRole("button", { name: "Dark" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
+
+test("navigation works when scrollTo returns a Promise (newer browsers)", async ({ page }) => {
+  const problems: string[] = [];
+  page.on("pageerror", (e) => problems.push(e.message));
+  page.on("console", (m) => {
+    if (m.type() === "error" || m.text().includes("useEffect must not return")) problems.push(m.text());
+  });
+  await page.addInitScript(() => {
+    const original = window.scrollTo.bind(window);
+    window.scrollTo = ((...args: Parameters<typeof window.scrollTo>) => {
+      original(...args);
+      return Promise.resolve();
+    }) as typeof window.scrollTo;
+  });
+  await page.goto("/");
+  await page.getByRole("link", { name: "Browse all openings" }).click();
+  await page.getByRole("link", { name: /Italian Game/ }).first().click();
+  await page.getByRole("link", { name: "Learn" }).first().click();
+  await page.getByRole("button", { name: "Next move" }).click();
+  await page.goto("/notation/coordinates");
+  await expect(page.getByRole("heading", { name: "The board's coordinates" })).toBeVisible();
+  expect(problems).toEqual([]);
+});
+
+test("board screens hide the tab bar on phones; other screens keep it", async ({ page, isMobile }) => {
+  const nav = page.getByRole("navigation", { name: "Main" });
+  await page.goto("/openings/italian-game/learn?color=w&line=giuoco-piano-main");
+  if (isMobile) await expect(nav).toBeHidden();
+  else await expect(nav).toBeVisible();
+  await page.getByRole("link", { name: "Italian Game" }).click();
+  await expect(nav).toBeVisible();
 });

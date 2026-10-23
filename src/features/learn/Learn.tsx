@@ -4,6 +4,7 @@ import { Board, type BoardMove } from "../../components/Board";
 import { IconFirst, IconFlip, IconLast, IconNext, IconPrev } from "../../components/icons";
 import { MoveList, NotationHint } from "../../components/MoveList";
 import { BackLink, FeedbackBanner, RichText } from "../../components/ui";
+import { useImmersive } from "../../components/useImmersive";
 import { getOpening } from "../../content/openings";
 import { moveNumberLabel } from "../../lib/fen";
 import type { Feedback } from "../../lib/trainer";
@@ -25,6 +26,7 @@ export function Learn() {
 }
 
 function LearnView({ openingId, lineId, color, startPly }: { openingId: string; lineId: string; color: Color; startPly: number }) {
+  useImmersive();
   const opening = getOpening(openingId)!;
   const line = opening.lines.find((l) => l.id === lineId)!;
   const tree = treeFor(opening);

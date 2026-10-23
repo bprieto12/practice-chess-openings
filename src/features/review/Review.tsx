@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Board, type BoardMove } from "../../components/Board";
 import { MoveList } from "../../components/MoveList";
 import { FeedbackBanner, ProgressBar, RichText } from "../../components/ui";
+import { useImmersive } from "../../components/useImmersive";
 import { getOpening } from "../../content/openings";
 import { moveNumberLabel } from "../../lib/fen";
 import { dueCards } from "../../lib/srs";
@@ -47,6 +48,7 @@ export function Review() {
           })
         }
         onSkip={() => setSession((s) => (s ? { ...s, queue: s.queue.slice(1) } : s))}
+        onEnd={() => setSession((s) => (s ? { ...s, queue: [] } : s))}
       />
     );
   }
@@ -131,13 +133,16 @@ function ReviewCard({
   remaining,
   onDone,
   onSkip,
+  onEnd,
 }: {
   cardKeyId: string;
   position: number;
   remaining: number;
   onDone: (passed: boolean) => void;
   onSkip: () => void;
+  onEnd: () => void;
 }) {
+  useImmersive();
   const card = useApp((s) => s.cards[cardKeyId]);
   const recordReview = useApp((s) => s.recordReview);
   const opening = card ? getOpening(card.openingId) : undefined;
@@ -191,9 +196,14 @@ function ReviewCard({
     <div className="stack">
       <div className="row" style={{ justifyContent: "space-between" }}>
         <h1 style={{ fontSize: "1.2rem", margin: 0 }}>Review</h1>
-        <span className="small muted">
-          {position} · {remaining} left
-        </span>
+        <div className="row">
+          <span className="small muted">
+            {position} · {remaining} left
+          </span>
+          <button className="btn" onClick={onEnd}>
+            End session
+          </button>
+        </div>
       </div>
       <ProgressBar value={(position - 1) / (position - 1 + remaining)} label="Session progress" />
       <div className="trainer">
