@@ -6,3 +6,10 @@ dev-dist
 coverage
 test-results
 playwright-report
+
+# Terraform (commit .terraform.lock.hcl, never state)
+infra/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log

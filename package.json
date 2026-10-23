@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "chess.js": "^1.0.0",

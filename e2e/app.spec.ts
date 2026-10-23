@@ -86,3 +86,26 @@ test("settings: theme switch applies", async ({ page }) => {
   await page.getByRole("button", { name: "Dark" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+
+test("navigation works when scrollTo returns a Promise (newer browsers)", async ({ page }) => {
+  const problems: string[] = [];
+  page.on("pageerror", (e) => problems.push(e.message));
+  page.on("console", (m) => {
+    if (m.type() === "error" || m.text().includes("useEffect must not return")) problems.push(m.text());
+  });
+  await page.addInitScript(() => {
+    const original = window.scrollTo.bind(window);
+    window.scrollTo = ((...args: Parameters<typeof window.scrollTo>) => {
+      original(...args);
+      return Promise.resolve();
+    }) as typeof window.scrollTo;
+  });
+  await page.goto("/");
+  await page.getByRole("link", { name: "Browse all openings" }).click();
+  await page.getByRole("link", { name: /Italian Game/ }).first().click();
+  await page.getByRole("link", { name: "Learn" }).first().click();
+  await page.getByRole("button", { name: "Next move" }).click();
+  await page.goto("/notation/coordinates");
+  await expect(page.getByRole("heading", { name: "The board's coordinates" })).toBeVisible();
+  expect(problems).toEqual([]);
+});

@@ -100,7 +100,9 @@ function PracticeView({
     return () => clearTimeout(t);
   }, [state.phase, state.nodeId, tree, weight, settings.opponentDelayMs]);
 
-  useEffect(() => setShowExplain(false), [state.nodeId]);
+  useEffect(() => {
+    setShowExplain(false);
+  }, [state.nodeId]);
 
   const finishedLineId = state.phase === "done" ? state.lineIds[0] : undefined;
   const accuracy = practiceAccuracy(state);

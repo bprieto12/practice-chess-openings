@@ -31,7 +31,9 @@ function LessonView({ lesson }: { lesson: NotationLesson }) {
   const setLastVisited = useApp((s) => s.setLastVisited);
   const next = notationLessons.find((l) => l.number === lesson.number + 1);
 
-  useEffect(() => setLastVisited(`/notation/${lesson.id}`, `Notation ${lesson.number}: ${lesson.title}`), [lesson, setLastVisited]);
+  useEffect(() => {
+    setLastVisited(`/notation/${lesson.id}`, `Notation ${lesson.number}: ${lesson.title}`);
+  }, [lesson, setLastVisited]);
 
   return (
     <div className="stack">
