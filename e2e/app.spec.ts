@@ -58,7 +58,7 @@ test("practice a full line, then review", async ({ page }) => {
 
   // New cards are due in a day. Jump ahead, then review one.
   await page.clock.fastForward("25:00:00");
-  await page.getByRole("link", { name: /Review/ }).first().click();
+  await page.getByRole("link", { name: "Review queue" }).click();
   await expect(page.locator(".stat").first()).toHaveText("11");
   await page.getByRole("button", { name: /Start review/ }).click();
   await expect(page.getByText("What does Black play here?")).toBeVisible();
@@ -108,4 +108,13 @@ test("navigation works when scrollTo returns a Promise (newer browsers)", async 
   await page.goto("/notation/coordinates");
   await expect(page.getByRole("heading", { name: "The board's coordinates" })).toBeVisible();
   expect(problems).toEqual([]);
+});
+
+test("board screens hide the tab bar on phones; other screens keep it", async ({ page, isMobile }) => {
+  const nav = page.getByRole("navigation", { name: "Main" });
+  await page.goto("/openings/italian-game/learn?color=w&line=giuoco-piano-main");
+  if (isMobile) await expect(nav).toBeHidden();
+  else await expect(nav).toBeVisible();
+  await page.getByRole("link", { name: "Italian Game" }).click();
+  await expect(nav).toBeVisible();
 });

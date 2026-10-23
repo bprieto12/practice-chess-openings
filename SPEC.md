@@ -64,7 +64,7 @@ Home
 └── Settings
 ```
 
-**Navigation:** a bottom tab bar on mobile (Openings · Review · Notation · Settings) and a left sidebar or top nav on screens ≥ 1024px.
+**Navigation:** a bottom tab bar on mobile (Home · Openings · Review · Notation · Settings) and a top nav on screens ≥ 1024px. On phones and tablets, board screens (Learn, Practice, a running Review session, notation lessons) hide the tab bar so the board gets the room and nothing covers the controls. Each of these screens has its own way back: a back link, or "End session" in Review.
 
 **Routes** (hash or history routing; the app is a static SPA):
 

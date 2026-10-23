@@ -4,6 +4,7 @@ import { Board, type BoardMove } from "../../components/Board";
 import { IconFlip } from "../../components/icons";
 import { MoveList } from "../../components/MoveList";
 import { BackLink, FeedbackBanner, ProgressBar, RichText } from "../../components/ui";
+import { useImmersive } from "../../components/useImmersive";
 import { getOpening } from "../../content/openings";
 import { moveNumberLabel } from "../../lib/fen";
 import {
@@ -54,6 +55,7 @@ function PracticeView({
   color: Color;
   onRetry: () => void;
 }) {
+  useImmersive();
   const tree = treeFor(opening);
   const settings = useApp((s) => s.settings);
   const linesProgress = useApp((s) => s.lines);
@@ -225,7 +227,7 @@ function PracticeView({
                 </div>
               )}
               <p className="small muted" style={{ margin: 0 }}>
-                These positions are now in your Review queue.
+                These positions are now in your <Link to="/review">Review queue</Link>.
               </p>
               <div className="row">
                 <button className="btn btn--primary" onClick={onRetry}>
